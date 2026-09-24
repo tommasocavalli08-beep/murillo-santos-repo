@@ -1,0 +1,9 @@
+import Reveal from '@/components/Reveal'; import { whatsapp } from '@/lib/site';
+export const metadata={title:'Tratamentos e Procedimentos',description:'Consultas, pré-natal, histeroscopia, laparoscopia, endometriose e cirurgias ginecológicas com Dr. Murillo Santos em Maringá.'};
+const groups=[
+['Consultas e acompanhamento',['Consulta ginecológica de rotina','Pré-natal de baixo e alto risco','Investigação de infertilidade','Investigação de dor pélvica crônica','Terapia de reposição hormonal pós-menopausa','Acompanhamento de parto normal e cesariana']],
+['Cirurgia ginecológica',['Histerectomia por diferentes vias','Laqueadura tubária','Ooforectomia','Ooforoplastia','Miomectomia','Correção cirúrgica de endometriose profunda','Ninfoplastia']],
+['Histeroscopia e colo uterino',['Histeroscopia cirúrgica','Histeroscopia com ressectoscópio','CAF para alterações do exame preventivo']],
+['Assoalho pélvico',['Colpoplastia anterior e posterior','Colpocleise','Sling transobturatório']]
+];
+export default function Tratamentos(){return <><section className="inner-hero"><div className="container"><span className="kicker">Tratamentos</span><h1>Opções definidas pelo diagnóstico — não por um protocolo único.</h1><p>Conheça as principais áreas de atendimento. A indicação de cada técnica depende de avaliação médica individual.</p></div></section><section className="section"><div className="container treatment-groups">{groups.map((g,i)=><Reveal key={g[0]}><div className="treatment-group"><div><span>0{i+1}</span><h2>{g[0]}</h2></div><ul>{(g[1] as string[]).map(x=><li key={x}>{x}</li>)}</ul></div></Reveal>)}</div></section><section className="cta"><div className="container cta-inner"><h2>Tem sintomas ou já recebeu um diagnóstico?</h2><p>Uma consulta é o ponto de partida para discutir exames, possibilidades e riscos/benefícios de cada opção.</p><a className="btn white" href={whatsapp()} target="_blank">Falar no WhatsApp</a></div></section></>}
