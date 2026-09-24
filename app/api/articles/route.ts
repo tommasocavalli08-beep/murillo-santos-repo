@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { getArticles } from '@/lib/articles';
 
 const slugify=(s:string)=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'').slice(0,80);
@@ -25,6 +26,9 @@ export async function POST(req:Request){
   };
   const {put}=await import('@vercel/blob');
   await put(`articles/${slug}.json`,JSON.stringify(article),{access:'public',contentType:'application/json',addRandomSuffix:false,allowOverwrite:true});
+  revalidatePath('/');
+  revalidatePath('/artigos');
+  revalidatePath(`/artigos/${slug}`);
   return NextResponse.json(article,{status:201});
  }catch(e){return NextResponse.json({error:e instanceof Error?e.message:'Erro ao publicar artigo.'},{status:500})}
 }
