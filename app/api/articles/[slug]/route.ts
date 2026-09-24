@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { getArticle } from '@/lib/articles';
 
 export async function PUT(req:Request,{params}:{params:Promise<{slug:string}>}){
@@ -21,6 +22,9 @@ export async function PUT(req:Request,{params}:{params:Promise<{slug:string}>}){
   };
   const {put}=await import('@vercel/blob');
   await put(`articles/${slug}.json`,JSON.stringify(article),{access:'public',contentType:'application/json',addRandomSuffix:false,allowOverwrite:true});
+  revalidatePath('/');
+  revalidatePath('/artigos');
+  revalidatePath(`/artigos/${slug}`);
   return NextResponse.json(article);
  }catch(e){return NextResponse.json({error:e instanceof Error?e.message:'Erro ao atualizar artigo.'},{status:500})}
 }
@@ -34,6 +38,9 @@ export async function DELETE(_req:Request,{params}:{params:Promise<{slug:string}
   const target=result.blobs.find(b=>b.pathname===`articles/${slug}.json`);
   if(!target)return NextResponse.json({error:'Artigo não encontrado.'},{status:404});
   await del(target.url);
+  revalidatePath('/');
+  revalidatePath('/artigos');
+  revalidatePath(`/artigos/${slug}`);
   return NextResponse.json({ok:true});
  }catch(e){return NextResponse.json({error:e instanceof Error?e.message:'Erro ao excluir artigo.'},{status:500})}
 }
