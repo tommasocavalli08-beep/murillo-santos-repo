@@ -3,6 +3,8 @@ import { getArticle } from '@/lib/articles';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { site } from '@/lib/site';
+export const dynamic='force-dynamic';
+export const revalidate=0;
 
 const base=process.env.NEXT_PUBLIC_SITE_URL||'https://drmurillosantos.com.br';
 
