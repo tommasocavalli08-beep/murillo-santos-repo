@@ -4,6 +4,8 @@ import { ArrowUpRight, Baby, HeartPulse, ScanLine, Sparkles, Stethoscope, Syring
 import Reveal from '@/components/Reveal';
 import { getArticles } from '@/lib/articles';
 import { site, whatsapp } from '@/lib/site';
+export const dynamic='force-dynamic';
+export const revalidate=0;
 
 const focus=[
   {icon:ScanLine,title:'Cirurgia minimamente invasiva',text:'Laparoscopia e histeroscopia com indicação individualizada para diferentes condições ginecológicas.'},
