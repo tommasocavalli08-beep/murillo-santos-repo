@@ -1,8 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import ScrollProgress from '@/components/ScrollProgress';
+import SiteChrome from '@/components/SiteChrome';
 import { site } from '@/lib/site';
 
 const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://drmurillosantos.com.br';
@@ -23,5 +21,5 @@ export default function RootLayout({children}:{children:React.ReactNode}){
       {'@type':['MedicalBusiness','LocalBusiness'],'@id':`${base}/#clinic`,name:`${site.fullName} - ${site.clinic}`,url:base,telephone:`+55 ${site.phoneDisplay}`,image:`${base}/images/clinica-2.webp`,address:{'@type':'PostalAddress',streetAddress:'Rua Princesa Isabel, 158',addressLocality:'Maringá',addressRegion:'PR',addressCountry:'BR'},medicalSpecialty:['Gynecologic','Obstetric'],employee:{'@id':`${base}/#physician`},sameAs:[site.instagram,site.facebook]},
       {'@type':'WebSite','@id':`${base}/#website`,url:base,name:site.name,inLanguage:'pt-BR',publisher:{'@id':`${base}/#physician`}}
     ]};
-  return <html lang="pt-BR"><body><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema)}}/><ScrollProgress/><Header/><main>{children}</main><Footer/></body></html>
+  return <html lang="pt-BR"><body><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema)}}/><SiteChrome>{children}</SiteChrome></body></html>
 }
