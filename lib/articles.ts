@@ -7,6 +7,7 @@ export type Article = {
   content: string;
   category: string;
   image?: string;
+  youtube?: string;
   publishedAt: string;
   updatedAt: string;
 };
