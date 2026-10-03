@@ -21,11 +21,16 @@ export async function GET(request: Request) {
         const blob = await put(path, JSON.stringify({ check: true }), {
           access: 'public',
           contentType: 'application/json',
-          addRandomSuffix: false
+          addRandomSuffix: false,
+          allowOverwrite: true
         });
         url = blob.url;
-        const response = await fetch(url, { cache: 'no-store' });
+        const [response, listed] = await Promise.all([
+          fetch(url, { cache: 'no-store' }),
+          list({ prefix: path, limit: 1 })
+        ]);
         result.writeTest = response.ok ? 'ok' : 'readback-failed';
+        result.listAfterWrite = listed.blobs.some(b => b.pathname === path);
         if (!response.ok) console.error('Blob healthcheck readback failed:', response.status);
       } catch (error) {
         result.writeTest = 'failed';
