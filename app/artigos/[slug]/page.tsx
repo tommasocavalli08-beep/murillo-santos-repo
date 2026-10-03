@@ -20,7 +20,7 @@ function youtubeEmbed(url?:string){
 }
 
 function inline(text: string): ReactNode[] {
-  return text.split(/(\\*\\*[^*]+\\*\\*|https?:\\/\\/[^\\s]+)/g).filter(Boolean).map((part, index) => {
+  return text.split(/(\*\*[^*]+\*\*|https?:\/\/[^\s]+)/g).filter(Boolean).map((part, index) => {
     if (part.startsWith('**') && part.endsWith('**')) return <strong key={index}>{part.slice(2, -2)}</strong>;
     if (part.startsWith('https://') || part.startsWith('http://')) {
       const url = part.replace(/[.,;]+$/, '');
@@ -49,10 +49,10 @@ function renderContent(content: string): ReactNode[] {
       listType = null;
     }
   };
-  for (const raw of content.replace(/\\r\\n/g, '\\n').split('\\n')) {
+  for (const raw of content.replace(/\r\n/g, '\n').split('\n')) {
     const line = raw.trim();
     if (!line) { flush(); continue; }
-    const heading = line.match(/^(#{1,3})\\s+(.+)$/);
+    const heading = line.match(/^(#{1,3})\s+(.+)$/);
     if (heading) {
       flush();
       blocks.push(heading[1].length === 3
@@ -60,8 +60,8 @@ function renderContent(content: string): ReactNode[] {
         : <h2 key={blocks.length}>{inline(heading[2])}</h2>);
       continue;
     }
-    const bullet = line.match(/^[-*]\\s+(.+)$/);
-    const numbered = line.match(/^\\d+\\.\\s+(.+)$/);
+    const bullet = line.match(/^[-*]\s+(.+)$/);
+    const numbered = line.match(/^\d+\.\s+(.+)$/);
     if (bullet || numbered) {
       const nextType = bullet ? 'ul' : 'ol';
       if (paragraph.length || (listType && listType !== nextType)) flush();
