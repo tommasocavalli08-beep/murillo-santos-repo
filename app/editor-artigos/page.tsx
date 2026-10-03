@@ -17,16 +17,25 @@ export default function Editor(){
   const [editing,setEditing]=useState<string|null>(null);
   const [form,setForm]=useState(empty);
 
-  async function load(){
-    const [s,a]=await Promise.all([
-      fetch('/api/articles/status').then(r=>r.json()),
-      fetch('/api/articles',{cache:'no-store'}).then(r=>r.json())
+  async function load():Promise<Article[]>{
+    const [statusResponse,articlesResponse]=await Promise.all([
+      fetch('/api/articles/status',{cache:'no-store'}),
+      fetch('/api/articles',{cache:'no-store'})
     ]);
-    setStorage(s.connected?'connected':'missing');
-    setArticles(Array.isArray(a)?a:[]);
+    const state=await statusResponse.json();
+    if(!statusResponse.ok||!state.readable){
+      setStorage('missing');
+      throw new Error('Não foi possível acessar o armazenamento dos artigos.');
+    }
+    if(!articlesResponse.ok)throw new Error('Não foi possível carregar os artigos publicados.');
+    const rows=await articlesResponse.json();
+    if(!Array.isArray(rows))throw new Error('Resposta inválida ao carregar artigos.');
+    setStorage('connected');
+    setArticles(rows);
+    return rows;
   }
 
-  useEffect(()=>{load().catch(()=>setStorage('missing'))},[]);
+  useEffect(()=>{load().catch(e=>setStatus(e instanceof Error?e.message:'Erro ao carregar artigos.'))},[]);
 
   function newArticle(){
     setEditing(null); setForm(empty); setStatus('');
@@ -61,9 +70,12 @@ export default function Editor(){
       const r=await fetch(url,{method,headers:{'content-type':'application/json'},body:JSON.stringify(form)});
       const j=await r.json();
       if(!r.ok)throw new Error(j.error||'Erro ao salvar artigo.');
-      setStatus(editing?'Artigo atualizado com sucesso.':`Publicado com sucesso: /artigos/${j.slug}`);
       setEditing(j.slug); setForm(v=>({...v,slug:j.slug}));
-      await load();
+      const updated=await load();
+      if(!updated.some(article=>article.slug===j.slug)){
+        throw new Error('O artigo foi enviado, mas não apareceu na biblioteca. Não publique novamente; entre em contato com o suporte.');
+      }
+      setStatus(editing?'Artigo atualizado com sucesso.':`Publicado com sucesso: /artigos/${j.slug}`);
     }catch(e){setStatus(e instanceof Error?e.message:'Erro ao salvar artigo.')}
     finally{setBusy(false)}
   }
@@ -80,7 +92,7 @@ export default function Editor(){
   }
 
   return <div className="editor-shell">
-    <div className="editor-topbar"><strong>Murillo Santos</strong><span>Editor de conteúdo</span></div>
+    <div className="editor-topbar"><strong>Murillo Santos</strong><span>Editor de conteúdo · www.drmurillosantos.com.br</span></div>
 
     <div className="editor-dashboard">
       <section className="editor-card editor-main">
